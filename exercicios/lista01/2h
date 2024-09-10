@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int main() {
+    double primeiro_termo;
+    double razao;
+    int n;
+    double termo_n;
+
+    printf("Digite o primeiro termo da Progressão Aritmética (PA): ");
+    scanf("%lf", &primeiro_termo);
+
+    printf("Digite a razão da PA: ");
+    scanf("%lf", &razao);
+
+    printf("Digite o número N (posição do termo desejado): ");
+    scanf("%d", &n);
+
+    termo_n = primeiro_termo + (n - 1) * razao;
+
+    printf("O %d-ésimo termo da PA é: %.2lf\n", n, termo_n);
+
+    return 0;
+}
