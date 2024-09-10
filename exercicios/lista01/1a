@@ -7,6 +7,8 @@ int main () {
 
 O código está errado pois o valor atribuído a variável "n" é muito alto para ser int. O correto seria utilizar a variável double.
 
+O correto seria:
+
 # include < stdio .h >
 int main () {
   double n = 4000000000;
