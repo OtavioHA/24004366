@@ -1,0 +1,15 @@
+#include <stdio.h>
+
+int main() {
+    double raio;
+    double area;
+
+    printf("Digite o raio do círculo: ");
+    scanf("%lf", &raio);
+    
+    area = 3.14 * raio * raio;
+
+    printf("A área do círculo com raio %.2lf é %.2lf\n", raio, area);
+
+    return 0;
+}
