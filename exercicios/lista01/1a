@@ -1,0 +1,15 @@
+# include < stdio .h >
+int main () {
+  int n = 4000000000;
+  printf ("%d\n", n );
+  return 0;
+}
+
+O código está errado pois o valor atribuído a variável "n" é muito alto para ser int. O correto seria utilizar a variável double.
+
+# include < stdio .h >
+int main () {
+  double n = 4000000000;
+  printf ("%f\n", n );
+  return 0;
+}
