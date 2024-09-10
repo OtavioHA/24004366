@@ -1,0 +1,17 @@
+# include < stdio .h >
+int main () {
+  printf ("%d\n", a );
+  int a ;
+  return 0;
+}
+
+O código está errado pois a variável "a" , está sendo declarada após o printf, ou seja, ela está sendo "chamada" antes de ser criada.
+
+O correto seria:
+
+# include < stdio .h >
+int main () {
+  int a ;
+  printf ("%d\n", a );
+  return 0;
+}
