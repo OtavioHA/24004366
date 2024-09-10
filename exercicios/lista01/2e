@@ -1,0 +1,29 @@
+#include <stdio.h>
+#include <math.h> 
+
+int main() {
+    double largura, altura;   
+    double area;              
+    double tinta_por_m2 = 300; 
+    double capacidade_lata = 2000; 
+    double quantidade_tinta_necessaria; 
+    double latas_necessarias; 
+
+    printf("Digite a largura da parede em metros: ");
+    scanf("%lf", &largura);
+
+    printf("Digite a altura da parede em metros: ");
+    scanf("%lf", &altura);
+
+    area = largura * altura;
+
+    quantidade_tinta_necessaria = area * tinta_por_m2;
+
+    latas_necessarias = quantidade_tinta_necessaria / capacidade_lata;
+
+    latas_necessarias = ceil(latas_necessarias);
+
+    printf("Você precisará de %.0lf latas de tinta para pintar a parede.\n", latas_necessarias);
+
+    return 0;
+}
