@@ -1,0 +1,17 @@
+# include < stdio .h >
+int main () { 
+  printf ("%d", 4); 
+  printf ("%d", 2); 
+  return 0; 
+}
+
+O código irá mostrar ao usuário o número "42", ao invés de "4" e depois "2". O certo seria quebrar a linha após o printf.
+
+O correto seria:
+
+# include < stdio .h >
+int main () { 
+  printf ("%d\n", 4); 
+  printf ("%d\n", 2); 
+  return 0; 
+ }
