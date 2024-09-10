@@ -1,0 +1,23 @@
+#include <stdio.h>
+
+int main() {
+    double pressao;
+    double volume; 
+    double temperatura; 
+    double massa_ar; 
+
+    printf("Digite a pressão do pneu (em unidades apropriadas): ");
+    scanf("%lf", &pressao);
+
+    printf("Digite o volume do pneu (em unidades apropriadas): ");
+    scanf("%lf", &volume); 
+
+    printf("Digite a temperatura (em graus Celsius): ");
+    scanf("%lf", &temperatura);
+
+    massa_ar = (pressao * volume) / (0.37 * (temperatura + 460));
+
+    printf("A massa de ar do pneu é: %.2lf unidades de massa\n", massa_ar);
+
+    return 0;
+}
