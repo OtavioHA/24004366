@@ -1,0 +1,19 @@
+# include < stdio .h >
+int main () {
+  int a ;
+  scanf ("%d", a );
+  printf ("%d", a );
+  return 0;
+}
+
+O código não está correto pois para atribuir um valor à variável pelo scanf, deve haver &.
+
+O correto seria:
+
+# include < stdio .h >
+int main () {
+  int a ;
+  scanf ("%d", &a );
+  printf ("%d", a );
+  return 0;
+}
