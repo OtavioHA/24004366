@@ -1,0 +1,34 @@
+#include <stdio.h>
+
+int main() {
+    double valor_investido = 1000.0; 
+    double preco_acao1 = 24.13;
+    double preco_acao2 = 11.00;  
+    double preco_acao3 = 38.65;    
+    double dividendos_acao1 = 17.00; 
+    double dividendos_acao2 = 35.00; 
+    double dividendos_acao3 = 25.00; 
+    double quantidade_acao1, quantidade_acao2, quantidade_acao3;
+    double dy_acao1, dy_acao2, dy_acao3;
+
+    quantidade_acao1 = valor_investido / preco_acao1;
+    quantidade_acao2 = valor_investido / preco_acao2;
+    quantidade_acao3 = valor_investido / preco_acao3;
+
+    
+    dy_acao1 = (dividendos_acao1 / preco_acao1) * 100;
+    dy_acao2 = (dividendos_acao2 / preco_acao2) * 100;
+    dy_acao3 = (dividendos_acao3 / preco_acao3) * 100;
+
+    
+    printf("Dividend Yield da Ação 1: %.2lf%%\n", dy_acao1);
+    printf("Dividend Yield da Ação 2: %.2lf%%\n", dy_acao2);
+    printf("Dividend Yield da Ação 3: %.2lf%%\n", dy_acao3);
+
+    
+    printf("Quantidade de ações da Ação 1 que pode ser comprada: %.0lf\n", quantidade_acao1);
+    printf("Quantidade de ações da Ação 2 que pode ser comprada: %.0lf\n", quantidade_acao2);
+    printf("Quantidade de ações da Ação 3 que pode ser comprada: %.0lf\n", quantidade_acao3);
+
+    return 0;
+}
