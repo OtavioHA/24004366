@@ -1,0 +1,175 @@
+#include <stdio.h>
+#include <string.h>
+
+
+void controleMovimento();
+void leituraSensores();
+void controleAtuacao();
+void monitoramentoBateria();
+void navegacaoAutonoma();
+
+int main() {
+    int opcao;
+
+    do {
+        printf("\n==================================\n");
+        printf("Controle Completo do Robo\n");
+        printf("Escolha uma funcionalidade:\n");
+        printf("1. Controle de Movimento (10x10)\n");
+        printf("2. Leitura de Sensores de Distancia\n");
+        printf("3. Controle de Atuacao\n");
+        printf("4. Monitoramento de Bateria\n");
+        printf("5. Navegacao Autonoma (5x5)\n");
+        printf("6. Sair\n");
+        printf("==================================\n");
+        printf("Digite sua escolha: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                controleMovimento();
+                break;
+            case 2:
+                leituraSensores();
+                break;
+            case 3:
+                controleAtuacao();
+                break;
+            case 4:
+                monitoramentoBateria();
+                break;
+            case 5:
+                navegacaoAutonoma();
+                break;
+            case 6:
+                printf("Encerrando o programa. Obrigado!\n");
+                break;
+            default:
+                printf("Opcao invalida! Tente novamente.\n");
+                break;
+        }
+    } while (opcao != 6);
+
+    return 0;
+}
+
+
+void controleMovimento() {
+    int x = 5, y = 5;
+    char comando[10];
+
+    printf("\nControle de Movimento (10x10)\n");
+    printf("Posicao inicial: (%d, %d)\n", x, y);
+    printf("Comandos: cima, baixo, esquerda, direita\n");
+    printf("Digite 'sair' para voltar ao menu principal.\n");
+
+    while (1) {
+        printf("Posicao atual: (%d, %d)\n", x, y);
+        printf("Insira o comando: ");
+        scanf("%s", comando);
+
+        if (strcmp(comando, "sair") == 0) break;
+
+        if (strcmp(comando, "cima") == 0 && y > 0) y++;
+        else if (strcmp(comando, "baixo") == 0 && y < 9) y--;
+        else if (strcmp(comando, "esquerda") == 0 && x > 0) x--;
+        else if (strcmp(comando, "direita") == 0 && x < 9) x++;
+        else printf("Movimento invalido!\n");
+    }
+}
+
+
+void leituraSensores() {
+    float distancia;
+    char opcao;
+
+    printf("\nLeitura de Sensores de Distancia\n");
+    printf("Digite as distancias medidas (em cm). Digite 'N' para sair.\n");
+
+    do {
+        printf("Insira a distancia medida: ");
+        scanf("%f", &distancia);
+        printf("Distancia registrada: %.2f cm\n", distancia);
+
+        printf("Deseja continuar (S/N)? ");
+        scanf(" %c", &opcao);
+    } while (opcao == 'S' || opcao == 's');
+}
+
+
+void controleAtuacao() {
+    int opcao;
+
+    printf("\nControle de Atuacao\n");
+    printf("1. Ligar lampada\n");
+    printf("2. Tocar som\n");
+    printf("3. Mover braco\n");
+    printf("0. Voltar ao menu principal\n");
+
+    while (1) {
+        printf("Escolha uma acao: ");
+        scanf("%d", &opcao);
+
+        if (opcao == 0) break;
+        switch (opcao) {
+            case 1:
+                printf("Lampada ligada!\n");
+                break;
+            case 2:
+                printf("Som tocando!\n");
+                break;
+            case 3:
+                printf("Braco movido!\n");
+                break;
+            default:
+                printf("Opcao invalida! Tente novamente.\n");
+                break;
+        }
+    }
+}
+
+
+void monitoramentoBateria() {
+    float nivel_bateria;
+
+    printf("\nMonitoramento de Bateria\n");
+    printf("Insira o nivel da bateria (em porcentagem):\n");
+
+    do {
+        printf("Nivel atual: ");
+        scanf("%f", &nivel_bateria);
+
+        if (nivel_bateria < 20.0) {
+            printf("ATENCAO: Nivel de bateria baixo (%.2f%%). Recarregue!\n", nivel_bateria);
+        } else {
+            printf("Nivel de bateria suficiente (%.2f%%).\n", nivel_bateria);
+        }
+    } while (nivel_bateria < 20.0);
+
+    printf("Bateria acima de 20%%. Monitoramento encerrado.\n");
+}
+
+
+void navegacaoAutonoma() {
+    int x = 2, y = 2;
+    char comando[10];
+
+    printf("\nNavegacao Autonoma (5x5)\n");
+    printf("Posicao inicial: (%d, %d)\n", x, y);
+    printf("Comandos: cima, baixo, esquerda, direita\n");
+    printf("Digite 'sair' para voltar ao menu principal.\n");
+
+    while (1) {
+        printf("Posicao atual: (%d, %d)\n", x, y);
+        printf("Insira o comando: ");
+        scanf("%s", comando);
+
+        if (strcmp(comando, "sair") == 0) break;
+
+        if (strcmp(comando, "cima") == 0 && y > 0) y++;
+        else if (strcmp(comando, "baixo") == 0 && y < 4) y--;
+        else if (strcmp(comando, "esquerda") == 0 && x > 0) x--;
+        else if (strcmp(comando, "direita") == 0 && x < 4) x++;
+        else printf("Movimento invalido!\n");
+    }
+}
