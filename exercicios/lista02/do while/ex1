@@ -1,0 +1,61 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    int x = 0, y = 0;
+    char comando[10];
+
+    printf("Bem-vindo ao Controle de Movimento do Robo!\n");
+    printf("O espaco e de 10x10 metros, com o robo comecando na posicao (0, 0).\n");
+    printf("Comandos disponiveis:\n");
+    printf("  - frente: Move o robo 1 metro para frente (aumenta Y)\n");
+    printf("  - tras: Move o robo 1 metro para tras (diminui Y)\n");
+    printf("  - esquerda: Move o robo 1 metro para a esquerda (diminui X)\n");
+    printf("  - direita: Move o robo 1 metro para a direita (aumenta X)\n");
+    printf("Digite 'sair' para encerrar o programa.\n");
+
+    while (1) {
+        printf("\nPosicao atual do robo: (%d, %d)\n", x, y);
+        printf("Insira o comando: ");
+        scanf("%s", comando);
+
+        if (strcmp(comando, "sair") == 0) {
+            printf("Encerrando o programa. Obrigado por usar o Controle de Movimento do Robo!\n");
+            break;
+        }
+
+        if (strcmp(comando, "frente") == 0) {
+            if (y + 1 < 10) {
+                y++;
+                printf("O robo se moveu para frente.\n");
+            } else {
+                printf("Movimento invalido! O robo atingiu o limite superior.\n");
+            }
+        } else if (strcmp(comando, "tras") == 0) {
+            if (y - 1 >= 0) {
+                y--;
+                printf("O robo se moveu para tras.\n");
+            } else {
+                printf("Movimento invalido! O robo atingiu o limite inferior.\n");
+            }
+        } else if (strcmp(comando, "esquerda") == 0) {
+            if (x - 1 >= 0) {
+                x--;
+                printf("O robo se moveu para a esquerda.\n");
+            } else {
+                printf("Movimento invalido! O robo atingiu o limite esquerdo.\n");
+            }
+        } else if (strcmp(comando, "direita") == 0) {
+            if (x + 1 < 10) {
+                x++;
+                printf("O robo se moveu para a direita.\n");
+            } else {
+                printf("Movimento invalido! O robo atingiu o limite direito.\n");
+            }
+        } else {
+            printf("Comando invalido! Tente novamente.\n");
+        }
+    }
+
+    return 0;
+}
