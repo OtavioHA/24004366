@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int main() {
+    int passos, totalPassos = 0;
+    const int meta = 10000;
+
+    printf("Aplicativo de Contagem de Passos\n");
+    printf("Meta diaria: %d passos\n", meta);
+
+    while (totalPassos < meta) {
+        printf("Insira a quantidade de passos dados: ");
+        scanf("%d", &passos);
+
+        if (passos < 0) {
+            printf("Erro: numero de passos invalido. Por favor, insira um valor positivo.\n");
+            continue; // retorna ao início do loop se o valor for negativo
+        }
+
+        totalPassos += passos;
+        printf("Total de passos ate agora: %d\n", totalPassos);
+
+        if (totalPassos >= meta) {
+            printf("Parabens! Você atingiu a meta de %d passos!\n", meta);
+            break; // interrompe o loop quando a meta é alcançada
+        }
+    }
+
+    printf("Monitoramento finalizado.\n");
+
+    return 0;
+}
