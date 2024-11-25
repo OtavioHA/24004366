@@ -1,0 +1,77 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <math.h>
+
+
+float calcular_media(float *precos, int dias) {
+    float soma = 0.0;
+    for (int i = 0; i < dias; i++) {
+        soma += precos[i];
+    }
+    return soma / dias;
+}
+
+
+float calcular_desvio_padrao(float *precos, int dias, float media) {
+    float soma = 0.0;
+    for (int i = 0; i < dias; i++) {
+        soma += pow(precos[i] - media, 2);
+    }
+    return sqrt(soma / dias);
+}
+
+int main() {
+    int dias;
+    char opcao;
+
+    do {
+        printf("Bem-vindo ao Analisador de Desempenho de Acoes!\n");
+        printf("Quantos dias voce deseja analisar? ");
+        scanf("%d", &dias);
+
+        if (dias <= 0) {
+            printf("Numero de dias invalido. Por favor, insira um valor maior que zero.\n");
+            continue;
+        }
+
+       
+        float *precos = (float *)malloc(dias * sizeof(float));
+        if (precos == NULL) {
+            printf("Erro de memoria. Encerrando o programa.\n");
+            return 1;
+        }
+
+        
+        printf("Insira os precos das acoes para %d dias:\n", dias);
+        for (int i = 0; i < dias; i++) {
+            printf("Preco do dia %d: R$ ", i + 1);
+            scanf("%f", &precos[i]);
+        }
+
+       
+        float media = calcular_media(precos, dias);
+        float desvio_padrao = calcular_desvio_padrao(precos, dias, media);
+
+        
+        printf("\nResultados da Analise:\n");
+        printf("Media dos precos: R$ %.2f\n", media);
+        printf("Desvio padrao: %.2f%%\n", desvio_padrao);
+
+        if (desvio_padrao < 5.0) {
+            printf("Desempenho das acoes: Estavel\n");
+        } else {
+            printf("Desempenho das acoes: Volatil\n");
+        }
+
+        
+        free(precos);
+
+        
+        printf("\nVoce deseja analisar novos dados? (S/N): ");
+        scanf(" %c", &opcao);
+
+    } while (opcao == 'S' || opcao == 's');
+
+    printf("Obrigado por usar o Analisador de Desempenho de Acoes !\n");
+    return 0;
+}
