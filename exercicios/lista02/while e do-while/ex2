@@ -1,0 +1,33 @@
+#include <stdio.h>
+#include <windows.h>
+
+int main() {
+    int nivelCombustivel;
+
+    printf("---Sistema de Monitoramento de Combustivel de Carro Eletrico---\n");
+
+    while (1) { // Loop infinito para monitorar constantemente
+        printf("Insira o nivel de combustivel atual (em %%): ");
+        scanf("%d", &nivelCombustivel);
+
+        if (nivelCombustivel < 0 || nivelCombustivel > 100) {
+            printf("Erro: Nivel de combustivel invalido. Por favor, insira um valor entre 0 e 100.\n");
+            continue; 
+        }
+
+        if (nivelCombustivel < 15) {
+            printf("ALERTA: Nivel de combustivel baixo! (%d%%). Por favor, recarregue o veiculo.\n", nivelCombustivel);
+        } else if (nivelCombustivel == 100) {
+            printf("Combustivel completo! (100%%)\n");
+            break;
+        } else {
+            printf("Nivel de combustivel adequado. (%d%%)\n", nivelCombustivel);
+        }
+
+        Sleep(1000); 
+    }
+
+    printf("Monitoramento finalizado.\n");
+
+    return 0;
+}
