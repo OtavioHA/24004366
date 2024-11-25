@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <windows.h>
+
+int main() {
+    float temperatura;
+
+    printf("Controle de Temperatura do Laboratório\n");
+    printf("Insira a temperatura atual em graus Celsius:\n");
+
+    while (1) { 
+        printf("Temperatura atual: ");
+        scanf("%f", &temperatura);
+
+        if (temperatura < 20.0) {
+            printf("ALERTA: Temperatura muito baixa! (%.1f C)\n", temperatura);
+        } else if (temperatura > 25.0) {
+            printf("ALERTA: Temperatura muito alta! (%.1f C)\n", temperatura);
+        } else {
+            printf("Temperatura dentro do intervalo seguro. (%.2f°C)\n", temperatura);
+        }
+
+        Sleep(1000); 
+    }
+
+    return 0;
+}
