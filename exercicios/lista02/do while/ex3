@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+int main() {
+    int opcao;
+
+    printf("Controle de Atuacao do Robo\n");
+    printf("O programa permite que o usuario selecione uma acao para o robo executar.\n");
+    printf("As opcoes sao:\n");
+    printf("  1 - Ligar lampada\n");
+    printf("  2 - Tocar som\n");
+    printf("  3 - Mover braco\n");
+    printf("  0 - Encerrar programa\n");
+
+    do {
+        printf("\nSelecione uma acao (digite o numero correspondente): ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                printf("Acao selecionada: Ligar lampada\n");
+                printf("Lampada ligada!\n");
+                break;
+            case 2:
+                printf("Acao selecionada: Tocar som\n");
+                printf("Som tocando!\n");
+                break;
+            case 3:
+                printf("Acao selecionada: Mover braco\n");
+                printf("Braco movido!\n");
+                break;
+            case 0:
+                printf("Encerrando programa. Obrigado por usar o Controle de Atuacao do Robo!\n");
+                break;
+            default:
+                printf("Opcao invalida! Tente novamente.\n");
+                break;
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
