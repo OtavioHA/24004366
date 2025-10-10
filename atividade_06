@@ -1,0 +1,178 @@
+#include <stdio.h>
+#include <string.h>
+
+#define MAX 8  // tamanho máximo da lista
+
+typedef struct { // o typedef struct permite associar um nome a um tipo de dados
+    int matricula;
+    char nome[50];
+    char polo[30];
+} Aluno;
+
+typedef struct {
+    Aluno alunos[MAX];
+    int qtd;
+} Lista;
+
+// inicializa lista
+void inicializar(Lista *l) {
+    l->qtd = 0;
+}
+
+// verifica se está cheia
+int cheia(Lista *l) {
+    return l->qtd == MAX;
+}
+
+// verifica se está vazia
+int vazia(Lista *l) {
+    return l->qtd == 0;
+}
+
+// insere aluno em ordem crescente de matrícula
+int inserirOrdenado(Lista *l, Aluno a) {
+    // Caso I: lista cheia
+    if (cheia(l)) {
+        printf("Lista cheia. Inserção cancelada.\n");
+        return 0;
+    }
+
+    // Caso II: lista vazia → insere na primeira posição
+    if (vazia(l)) {
+        l->alunos[0] = a;
+        l->qtd++;
+        return 1;
+    }
+
+    int i = 0;
+
+    // Caso III: elemento menor que o primeiro → insere no início
+    if (a.matricula < l->alunos[0].matricula) {
+        // desloca todos para a direita
+        for (int j = l->qtd; j > 0; j--) {
+            l->alunos[j] = l->alunos[j - 1];
+        }
+        l->alunos[0] = a;
+        l->qtd++;
+        return 1;
+    }
+
+    // Caso IV: elemento maior que o último → insere no final
+    if (a.matricula > l->alunos[l->qtd - 1].matricula) {
+        l->alunos[l->qtd] = a;
+        l->qtd++;
+        return 1;
+    }
+
+    // Caso V: elemento no meio → encontra posição e desloca
+    for (i = 0; i < l->qtd && l->alunos[i].matricula < a.matricula; i++);
+
+    // desloca os elementos para abrir espaço
+    for (int j = l->qtd; j > i; j--) {
+        l->alunos[j] = l->alunos[j - 1];
+    }
+
+    l->alunos[i] = a;
+    l->qtd++;
+    return 1;
+}
+
+// mostra todos os alunos
+void listar(Lista *l) {
+    if (vazia(l)) {
+        printf("\nNenhum aluno cadastrado.\n");
+        return;
+    }
+
+    printf("\n--- Lista de Alunos (ordenada por matrícula) ---\n");
+    for (int i = 0; i < l->qtd; i++) {
+        printf("Matrícula: %d | Nome: %s | Campus: %s\n",
+               l->alunos[i].matricula,
+               l->alunos[i].nome,
+               l->alunos[i].polo);
+    }
+}
+
+// busca aluno por matrícula
+int buscar(Lista *l, int matricula) {
+    for (int i = 0; i < l->qtd; i++) {
+        if (l->alunos[i].matricula == matricula)
+            return i;
+    }
+    return -1;
+}
+
+// remove aluno por matrícula
+int remover(Lista *l, int matricula) {
+    int pos = buscar(l, matricula);
+    if (pos == -1) {
+        printf("Aluno não encontrado.\n");
+        return 0;
+    }
+
+    for (int i = pos; i < l->qtd - 1; i++) {
+        l->alunos[i] = l->alunos[i + 1];
+    }
+
+    l->qtd--;
+    printf("Aluno removido com sucesso!\n");
+    return 1;
+}
+
+// menu de adição busca e remoção de alunos
+int main() {
+    Lista lista;
+    inicializar(&lista);
+    int opcao;
+
+    do {
+        printf("\n1 - Inserir aluno");
+        printf("\n2 - Listar alunos");
+        printf("\n3 - Buscar aluno");
+        printf("\n4 - Remover aluno");
+        printf("\n0 - Sair");
+        printf("\nEscolha: ");
+        scanf("%d", &opcao);
+        getchar();
+
+        if (opcao == 1) {
+            Aluno a;
+            printf("Matrícula: ");
+            scanf("%d", &a.matricula);
+            getchar();
+            printf("Nome: ");
+            fgets(a.nome, 50, stdin);
+            a.nome[strcspn(a.nome, "\n")] = '\0';
+            printf("Campus: ");
+            fgets(a.polo, 30, stdin);
+            a.polo[strcspn(a.polo, "\n")] = '\0';
+
+            inserirOrdenado(&lista, a);
+        }
+        else if (opcao == 2) {
+            listar(&lista);
+        }
+        else if (opcao == 3) {
+            int mat;
+            printf("Digite a matrícula: ");
+            scanf("%d", &mat);
+            int pos = buscar(&lista, mat);
+            if (pos != -1) {
+                printf("Encontrado: %s | Campus: %s\n",
+                       lista.alunos[pos].nome,
+                       lista.alunos[pos].polo);
+            } else {
+                printf("Aluno não encontrado.\n");
+            }
+        }
+        else if (opcao == 4) {
+            int mat;
+            printf("Digite a matrícula para remover: ");
+            scanf("%d", &mat);
+            remover(&lista, mat);
+        }
+
+    } while (opcao != 0);
+
+    return 0;
+}
