@@ -1,0 +1,459 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <math.h>
+#include <windows.h>
+
+// --- Estruturas de Dados ---
+
+// Estrutura para um nó da lista (representa um tipo de resistor)
+typedef struct No {
+    double resistencia_ohms; // Campo de ordenação (em Omega - Oms)
+    int quantidade;          // Quantidade de resistores disponíveis
+    struct No* prox;         // Ponteiro para o próximo nó
+} No;
+
+// Estrutura para a Lista Dinâmica
+typedef struct {
+    No* inicio;
+} Lista;
+
+// --- Funções Auxiliares ---
+
+/**
+ * @brief Inicializa a lista, tornando-a vazia.
+ * @param L Ponteiro para a lista a ser inicializada.
+ */
+void inicializar_lista(Lista* L) {
+    // Libera a memória de todos os nós existentes antes de reinicializar
+    No* atual = L->inicio;
+    No* proximo = NULL;
+    while (atual != NULL) {
+        proximo = atual->prox;
+        free(atual);
+        atual = proximo;
+    }
+    L->inicio = NULL;
+    printf("\n>>> A lista foi inicializada/reinicializada com sucesso.\n");
+}
+
+/**
+ * @brief Converte e imprime o valor da resistência com a unidade apropriada.
+ * @param resistencia_ohms O valor da resistência em Ohms (double).
+ */
+void imprimir_resistencia(double resistencia_ohms) {
+    if (resistencia_ohms >= 1000000.0) { // Megaohms (M\Omega)
+        printf("%.2f M Ohms", resistencia_ohms / 1000000.0);
+    } else if (resistencia_ohms >= 1000.0) { // Kiloohms (k\Omega)
+        printf("%.2f k Ohms", resistencia_ohms / 1000.0);
+    } else if (resistencia_ohms >= 1.0) { // Ohms (\Omega)
+        printf("%.2f Ohms", resistencia_ohms);
+    } else if (resistencia_ohms >= 0.001) { // Miliohms (m\Omega)
+        printf("%.2f m Ohms", resistencia_ohms * 1000.0);
+    } else {
+        printf("%.2e Ohms", resistencia_ohms); // Notação científica para valores muito pequenos
+    }
+}
+
+/**
+ * @brief Verifica se a lista está vazia.
+ * @param L Ponteiro para a lista.
+ * @return 1 se vazia, 0 caso contrário.
+ */
+int lista_vazia(Lista* L) {
+    return (L->inicio == NULL);
+}
+
+// --- Funções do Menu ---
+
+/**
+ * @brief Insere um novo tipo de resistor na lista, mantendo-a ordenada pela resistência.
+ * Se o resistor já existe, a quantidade é atualizada.
+ * @param L Ponteiro para a lista.
+ */
+void inserir(Lista* L) {
+    double r;
+    int q;
+
+    printf("\n--- Inserir Novo Resistor ---\n");
+    printf("Digite o valor da Resistencia (em Ohms): ");
+    if (scanf("%lf", &r) != 1 || r <= 0) {
+        printf("ERRO: Valor de resistência inválido ou não positivo.\n");
+        // Limpa o buffer de entrada
+        while (getchar() != '\n');
+        return;
+    }
+
+    // Busca pelo resistor. Se achar, apenas atualiza a quantidade.
+    No* atual = L->inicio;
+    while (atual != NULL) {
+        // Usa uma pequena tolerância para comparação de doubles
+        if (fabs(atual->resistencia_ohms - r) < 1e-9) {
+            printf("Resistor de ");
+            imprimir_resistencia(r);
+            printf(" ja existe. Digite a quantidade a ser ADICIONADA: ");
+            if (scanf("%d", &q) != 1 || q < 0) {
+                 printf("ERRO: Quantidade invalida.\n");
+                 while (getchar() != '\n');
+                 return;
+            }
+            atual->quantidade += q;
+            printf(">>> Quantidade atualizada. Nova quantidade: %d\n", atual->quantidade);
+            return;
+        }
+        atual = atual->prox;
+    }
+
+    // Se chegou aqui, o resistor é novo e precisa ser inserido na ordem correta.
+
+    printf("Digite a Quantidade de resistores disponiveis: ");
+    if (scanf("%d", &q) != 1 || q < 0) {
+         printf("ERRO: Quantidade invalida.\n");
+         while (getchar() != '\n');
+         return;
+    }
+
+    // Aloca novo nó
+    No* novo = (No*)malloc(sizeof(No));
+    if (novo == NULL) {
+        printf("ERRO: Falha na alocacao de memoria.\n");
+        return;
+    }
+    novo->resistencia_ohms = r;
+    novo->quantidade = q;
+    novo->prox = NULL;
+
+    // Inserção ordenada
+    No* ant = NULL;
+    atual = L->inicio;
+
+    // Encontra a posição correta (ant aponta para o anterior, atual aponta para o próximo)
+    while (atual != NULL && atual->resistencia_ohms < r) {
+        ant = atual;
+        atual = atual->prox;
+    }
+
+    if (ant == NULL) { // Inserção no início (lista vazia ou novo menor que o primeiro)
+        novo->prox = L->inicio;
+        L->inicio = novo;
+    } else { // Inserção no meio ou no fim
+        novo->prox = atual;
+        ant->prox = novo;
+    }
+
+    printf(">>> Novo resistor (");
+    imprimir_resistencia(r);
+    printf(") inserido com sucesso na lista.\n");
+}
+
+
+/**
+ * @brief Remove completamente um tipo de resistor da lista.
+ * @param L Ponteiro para a lista.
+ */
+void remover(Lista* L) {
+    if (lista_vazia(L)) {
+        printf("\nERRO: A lista esta vazia. Nao ha o que remover.\n");
+        return;
+    }
+
+    double r;
+    printf("\n--- Remover Tipo de Resistor ---\n");
+    printf("Digite o valor da Resistencia (em Ohms) para REMOCAO: ");
+    if (scanf("%lf", &r) != 1 || r <= 0) {
+        printf("ERRO: Valor de resistência inválido ou não positivo.\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    No* ant = NULL;
+    No* atual = L->inicio;
+
+    // Busca pelo nó a ser removido
+    while (atual != NULL && fabs(atual->resistencia_ohms - r) > 1e-9) {
+        ant = atual;
+        atual = atual->prox;
+    }
+
+    if (atual == NULL) {
+        printf("ERRO: Resistor de ");
+        imprimir_resistencia(r);
+        printf(" nao encontrado na lista.\n");
+    } else {
+        if (ant == NULL) { // Remoção no início
+            L->inicio = atual->prox;
+        } else { // Remoção no meio ou fim
+            ant->prox = atual->prox;
+        }
+        printf(">>> Resistor de ");
+        imprimir_resistencia(atual->resistencia_ohms);
+        printf(" (Quantidade: %d) removido COMPLETAMENTE da lista.\n", atual->quantidade);
+        free(atual); // Libera a memória do nó removido
+    }
+}
+
+/**
+ * @brief Lista todos os tipos de resistores em forma de tabela, usando ordens de grandeza.
+ * @param L Ponteiro para a lista.
+ */
+void listar(Lista* L) {
+    if (lista_vazia(L)) {
+        printf("\n--- Lista de Resistores ---\n");
+        printf("A lista esta vazia.\n");
+        return;
+    }
+
+    Sleep(1000);
+
+    printf("\n--- Lista Dinamica Ordenada de Resistores ---\n");
+    printf("+----------------------+-------------------+\n");
+    printf("|     Resistencia      |    Quantidade     |\n");
+    printf("+----------------------+-------------------+\n");
+
+    No* atual = L->inicio;
+    while (atual != NULL) {
+        printf("| ");
+        // Imprime a resistência formatada
+        imprimir_resistencia(atual->resistencia_ohms);
+        // Formatação de espaços para alinhamento
+        int len = 0;
+        if (atual->resistencia_ohms >= 1000000.0) len = 8; // X.XX MΩ
+        else if (atual->resistencia_ohms >= 1000.0) len = 7; // X.XX kΩ
+        else if (atual->resistencia_ohms >= 1.0) len = 5; // X.XX Ω
+        else if (atual->resistencia_ohms >= 0.001) len = 7; // X.XX mΩ
+        else len = 5; // Caso geral
+
+        // Garante que o alinhamento da resistência e do separador | fique correto
+        for (int i = 0; i < 20 - len; i++) {
+             printf(" ");
+        }
+
+        printf(" | %17d |\n", atual->quantidade);
+        atual = atual->prox;
+    }
+    printf("+----------------------+-------------------+\n");
+}
+
+/**
+ * @brief Consulta a quantidade de resistores disponíveis para um certo valor de resistência.
+ * @param L Ponteiro para a lista.
+ */
+void consultar(Lista* L) {
+    if (lista_vazia(L)) {
+        printf("\nERRO: A lista esta vazia.\n");
+        return;
+    }
+
+    double r;
+    printf("\n--- Consultar Estoque ---\n");
+    printf("Digite o valor da Resistencia (em Ohms) para consulta: ");
+    if (scanf("%lf", &r) != 1 || r <= 0) {
+        printf("ERRO: Valor de resistência inválido ou não positivo.\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    No* atual = L->inicio;
+    while (atual != NULL) {
+        if (fabs(atual->resistencia_ohms - r) < 1e-9) {
+            printf(">>> Resistor de ");
+            imprimir_resistencia(r);
+            printf(": %d unidades disponiveis.\n", atual->quantidade);
+            return;
+        }
+        atual = atual->prox;
+    }
+
+    printf(">>> Resistor de ");
+    imprimir_resistencia(r);
+    printf(" nao encontrado no estoque.\n");
+}
+
+/**
+ * @brief Retira (baixa) uma certa quantidade de resistores do estoque.
+ * @param L Ponteiro para a lista.
+ */
+void retirar(Lista* L) {
+    if (lista_vazia(L)) {
+        printf("\nERRO: A lista esta vazia.\n");
+        return;
+    }
+
+    double r;
+    int q;
+    printf("\n--- Retirar do Estoque ---\n");
+    printf("Digite o valor da Resistencia (em Ohms) para retirada: ");
+    if (scanf("%lf", &r) != 1 || r <= 0) {
+        printf("ERRO: Valor de resistência inválido ou não positivo.\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    No* atual = L->inicio;
+    while (atual != NULL) {
+        if (fabs(atual->resistencia_ohms - r) < 1e-9) {
+            printf("Resistor de ");
+            imprimir_resistencia(r);
+            printf(" encontrado. Estoque atual: %d.\n", atual->quantidade);
+            printf("Digite a QUANTIDADE a ser retirada: ");
+            if (scanf("%d", &q) != 1 || q <= 0) {
+                printf("ERRO: Quantidade de retirada invalida (deve ser positiva).\n");
+                while (getchar() != '\n');
+                return;
+            }
+
+            if (q > atual->quantidade) {
+                printf("ERRO: Quantidade solicitada (%d) excede o estoque disponivel (%d).\n", q, atual->quantidade);
+                return;
+            }
+
+            atual->quantidade -= q;
+            printf(">>> %d unidades de ", q);
+            imprimir_resistencia(r);
+            printf(" retiradas com sucesso. Novo estoque: %d.\n", atual->quantidade);
+
+            // Opcional: Remover o nó se a quantidade chegar a zero
+            if (atual->quantidade == 0) {
+                printf("AVISO: Estoque de ");
+                imprimir_resistencia(r);
+                printf(" chegou a zero. Sugerir remocao ou manter na lista.\n");
+            }
+            return;
+        }
+        atual = atual->prox;
+    }
+
+    printf(">>> Resistor de ");
+    imprimir_resistencia(r);
+    printf(" nao encontrado no estoque.\n");
+}
+
+/**
+ * @brief Repõe (aumenta) uma certa quantidade de resistores no estoque.
+ * @param L Ponteiro para a lista.
+ */
+void repor(Lista* L) {
+    if (lista_vazia(L)) {
+        printf("\nERRO: A lista esta vazia. Use Inserir para adicionar novos tipos.\n");
+        return;
+    }
+
+    double r;
+    int q;
+    printf("\n--- Repor Estoque ---\n");
+    printf("Digite o valor da Resistencia (em Ohms) para reposicao: ");
+    if (scanf("%lf", &r) != 1 || r <= 0) {
+        printf("ERRO: Valor de resistência inválido ou não positivo.\n");
+        while (getchar() != '\n');
+        return;
+    }
+
+    No* atual = L->inicio;
+    while (atual != NULL) {
+        if (fabs(atual->resistencia_ohms - r) < 1e-9) {
+            printf("Resistor de ");
+            imprimir_resistencia(r);
+            printf(" encontrado. Estoque atual: %d.\n", atual->quantidade);
+            printf("Digite a QUANTIDADE a ser reposta: ");
+            if (scanf("%d", &q) != 1 || q <= 0) {
+                printf("ERRO: Quantidade de reposicao invalida (deve ser positiva).\n");
+                while (getchar() != '\n');
+                return;
+            }
+
+            atual->quantidade += q;
+            printf(">>> %d unidades de ", q);
+            imprimir_resistencia(r);
+            printf(" repostas com sucesso. Novo estoque: %d.\n", atual->quantidade);
+            return;
+        }
+        atual = atual->prox;
+    }
+
+    printf(">>> Resistor de ");
+    imprimir_resistencia(r);
+    printf(" nao encontrado no estoque. Use a opcao 'Inserir' para adiciona-lo.\n");
+}
+
+
+// --- Função Principal e Menu ---
+
+int main() {
+    Lista estoque;
+    estoque.inicio = NULL; // Inicializa a lista como vazia
+
+    int opcao;
+    
+    // Insere alguns dados iniciais para facilitar o teste
+    printf("--- Iniciando com dados de exemplo ---\n");
+    // Inserindo na ordem, mas a funcao faria isso por si
+    // 10 Ohm
+    No* n1 = (No*)malloc(sizeof(No)); n1->resistencia_ohms = 10.0; n1->quantidade = 50; n1->prox = NULL;
+    // 1 kOhm (1000 Ohm)
+    No* n2 = (No*)malloc(sizeof(No)); n2->resistencia_ohms = 1000.0; n2->quantidade = 100; n2->prox = NULL;
+    // 100 kOhm (100000 Ohm)
+    No* n3 = (No*)malloc(sizeof(No)); n3->resistencia_ohms = 100000.0; n3->quantidade = 25; n3->prox = NULL;
+    
+    estoque.inicio = n1;
+    n1->prox = n2;
+    n2->prox = n3;
+    printf("Estoque pre-populado com 10 Ohms, 1k Ohms e 100k Ohms.\n");
+    // Fim dos dados iniciais
+
+    do {
+        printf("\n============================================\n");
+        printf("       MENU - GESTAO DE ESTOQUE RESISTORES\n");
+        printf("============================================\n");
+        printf("[1] Inserir novo tipo de resistor (ou adicionar a existente)\n");
+        printf("[2] Remover completamente um tipo de resistor\n");
+        printf("[3] Listar todos os resistores (em tabela ordenada)\n");
+        printf("[4] Consultar quantidade disponivel de um resistor\n");
+        printf("[5] Retirar uma quantidade do estoque (baixa)\n");
+        printf("[6] Repor uma quantidade no estoque (entrada)\n");
+        printf("[7] Inicializar/Reinicializar a lista (apagar tudo)\n");
+        printf("[0] Sair do programa\n");
+        printf("--------------------------------------------\n");
+        printf("Escolha uma opcao: ");
+
+        if (scanf("%d", &opcao) != 1) {
+            printf("ERRO: Entrada invalida. Tente novamente.\n");
+            // Limpa o buffer de entrada para evitar loop infinito
+            while (getchar() != '\n');
+            opcao = -1; // Força continuar no loop
+            continue;
+        }
+
+        switch (opcao) {
+            case 1:
+                inserir(&estoque);
+                break;
+            case 2:
+                remover(&estoque);
+                break;
+            case 3:
+                listar(&estoque);
+                break;
+            case 4:
+                consultar(&estoque);
+                break;
+            case 5:
+                retirar(&estoque);
+                break;
+            case 6:
+                repor(&estoque);
+                break;
+            case 7:
+                inicializar_lista(&estoque);
+                break;
+            case 0:
+                printf("\nEncerrando o programa. Memoria liberada.\n");
+                inicializar_lista(&estoque); // Libera a memória antes de sair
+                break;
+            default:
+                printf("\nOpcao invalida. Por favor, escolha uma opcao de 0 a 7.\n");
+                break;
+        }
+    } while (opcao != 0);
+
+    return 0;
+}
