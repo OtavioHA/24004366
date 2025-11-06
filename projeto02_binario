@@ -1,0 +1,184 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <windows.h>
+
+// --- 1. ESTRUTURA DE DADOS DA PILHA ---
+
+typedef struct NO {
+    int dado;           // O resto da divisão (0 ou 1)
+    struct NO *prox;    // Ponteiro para o próximo nó (abaixo na pilha)
+} No;
+
+typedef struct PILHA {
+    No *topo;           // Ponteiro para o topo da pilha
+} Pilha;
+
+// --- 2. FUNÇÕES BÁSICAS DA PILHA ---
+
+/**
+ * @brief Inicializa a pilha, garantindo que o topo aponte para NULL.
+ */
+void inicializar_pilha(Pilha *p) {
+    p->topo = NULL;
+}
+
+/**
+ * @brief Verifica se a pilha está vazia.
+ */
+int pilha_vazia(Pilha *p) {
+    return (p->topo == NULL);
+}
+
+/**
+ * @brief Adaptação da função INSERIR (PUSH). Coloca o novo resto no topo.
+ */
+void inserir(Pilha *p, int resto) {
+    No *novo_no = (No*)malloc(sizeof(No));
+    if (novo_no == NULL) {
+        printf("Erro de alocacao de memoria!\n");
+        exit(1);
+    }
+    
+    novo_no->dado = resto;
+    novo_no->prox = p->topo; // O novo nó aponta para o antigo topo
+    p->topo = novo_no;       // O topo agora é o novo nó
+}
+
+/**
+ * @brief Remove e retorna o elemento do topo (POP).
+ */
+int remover(Pilha *p) {
+    if (pilha_vazia(p)) {
+        printf("Erro: Pilha vazia! Nao foi possivel remover.\n");
+        return -1; // Valor de erro
+    }
+    
+    No *temp = p->topo;
+    int dado_removido = temp->dado;
+    p->topo = p->topo->prox; // Move o topo para o próximo elemento
+    free(temp);              // Libera a memória do nó removido
+    return dado_removido;
+}
+
+/**
+ * @brief Função para liberar toda a memória alocada para a pilha.
+ */
+void liberar_pilha(Pilha *p) {
+    No *atual = p->topo;
+    No *proximo;
+    while (atual != NULL) {
+        proximo = atual->prox;
+        free(atual);
+        atual = proximo;
+    }
+    p->topo = NULL;
+}
+
+
+// --- 3. FUNÇÃO PRINCIPAL DE CONVERSÃO ---
+
+/**
+ * @brief Aplica o algoritmo de divisão sucessiva para converter o número.
+ */
+void converter_para_binario(Pilha *p, int numero) {
+    if (numero == 0) {
+        // Caso especial: 0 em decimal é 0 em binário
+        inserir(p, 0); 
+        return;
+    }
+
+    int quociente = numero;
+    int resto;
+
+    printf("\n--- Processo de Conversao ---\n");
+    
+    // Repete até que o quociente seja zero
+    while (quociente > 0) {
+        resto = quociente % 2;       // 1. Calcula o resto
+        quociente = quociente / 2;   // 2. Calcula o novo quociente
+        
+        inserir(p, resto);           // 3. Salva (insere) o resto na pilha
+        
+        printf("Dividindo %d por 2: Quociente = %d, Resto = %d\n", 
+               (quociente * 2 + resto), quociente, resto);
+    }
+    printf("-----------------------------\n");
+}
+
+/**
+ * @brief Adaptação da função LISTAR. Lê a pilha do topo para a base (POP)
+ * para obter a sequência binária correta.
+ */
+void listar_binario(Pilha *p) {
+    if (pilha_vazia(p)) {
+        printf("A pilha esta vazia.\n");
+        return;
+    }
+    
+    printf("\n*** Resultado da Conversao ***\n");
+    printf("Numero Binario: ");
+    
+    // A função POP (remover) lê os restos na ordem inversa da inserção,
+    // que é a ordem correta do binário (mais significativo primeiro).
+    while (!pilha_vazia(p)) {
+        printf("%d", remover(p));
+    }
+    printf("b");
+    printf("\n******************************\n");
+}
+
+
+// --- 4. PROGRAMA PRINCIPAL ---
+
+int main() {
+    Pilha minha_pilha;
+    int numero_decimal;
+    int resposta;
+
+    inicio:
+
+    inicializar_pilha(&minha_pilha);
+    
+    printf("Projeto Pilha Dinamica: Conversor Decimal para Binario\n");
+    printf("---------------------------------------------------\n");
+    printf("Digite um numero inteiro positivo: ");
+    
+    // Garante que o input é lido corretamente
+    if (scanf("%d", &numero_decimal) != 1 || numero_decimal < 0) {
+        printf("Entrada invalida. Por favor, digite um numero inteiro positivo.\n");
+        return 1;
+    }
+    
+    // Executa a conversão, preenchendo a pilha
+    converter_para_binario(&minha_pilha, numero_decimal);
+    
+    // Lista e esvazia a pilha, imprimindo o resultado
+    listar_binario(&minha_pilha);
+    
+    // Limpeza final
+    liberar_pilha(&minha_pilha);
+
+    erro:
+
+    //Pergunta se quer realizar outra conversão
+    printf("Voce deseja realizar outra conversao? (1/0): ");
+    scanf("%i",&resposta);
+
+    if(resposta == 1){
+        printf("====================================\n"); //Se quiser realizar outra conversão, repete o processo
+        printf("\n");
+        Sleep(1000);
+        goto inicio;
+    }
+    else if(resposta == 0){
+        printf("====================================\n"); // Se não quiser, finaliza o programa
+        return 0;
+    }
+    else{
+        printf("Opcao invalida, tente novamente!\n"); // Caso insira um valor diferente de 0 e 1
+        Sleep(500);
+        goto erro;
+    }
+    
+    return 0;
+}
