@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <windows.h>
 
 // --- 1. ESTRUTURA DE DADOS DA PILHA ---
 
@@ -127,8 +126,19 @@ void listar_binario(Pilha *p) {
     printf("\n******************************\n");
 }
 
+// --- 4. FUNÇÃO PARA LIMPAR O BUFFER DE ENTRADA PARA VALORES DECIMAIS ---
 
-// --- 4. PROGRAMA PRINCIPAL ---
+/**
+ * @brief Limpa o buffer de entrada após leituras falhas ou incompletas do scanf.
+ */
+void limpar_buffer_entrada() {
+    int c;
+    // Consome caracteres do buffer até encontrar uma quebra de linha (\n) ou o fim do arquivo (EOF)
+    while ((c = getchar()) != '\n' && c != EOF);
+}
+
+
+// --- 5. PROGRAMA PRINCIPAL ---
 
 int main() {
     Pilha minha_pilha;
@@ -138,7 +148,7 @@ int main() {
     inicio:
 
     inicializar_pilha(&minha_pilha);
-
+    
     printf("======================================================\n");
     printf("Projeto Pilha Dinamica: Conversor Decimal para Binario\n");
     printf("---------------------------------------------------\n");
@@ -147,7 +157,8 @@ int main() {
     // Garante que o input é lido corretamente
     if (scanf("%d", &numero_decimal) != 1 || numero_decimal < 0) {
         printf("Entrada invalida. Por favor, digite um numero inteiro positivo.\n");
-        return 1;
+        limpar_buffer_entrada();
+        
     }
     
     // Executa a conversão, preenchendo a pilha
@@ -167,8 +178,9 @@ int main() {
 
     if(resposta == 1){
         printf("====================================\n"); //Se quiser realizar outra conversão, repete o processo
+        limpar_buffer_entrada();
         printf("\n");
-        Sleep(1000);
+        
         goto inicio;
     }
     else if(resposta == 0){
@@ -177,7 +189,8 @@ int main() {
     }
     else{
         printf("Opcao invalida, tente novamente!\n"); // Caso insira um valor diferente de 0 e 1
-        Sleep(500);
+        limpar_buffer_entrada();
+        
         goto erro;
     }
     
